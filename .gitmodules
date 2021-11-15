@@ -1,0 +1,3 @@
+[submodule "laradock"]
+	path = laradock
+	url = https://sources.insidegroup.fr/id2s/training/craftsmanship/laradock.git
