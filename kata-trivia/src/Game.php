@@ -27,6 +27,7 @@ class Game
     public function __construct(Writer $writer, QuestionDeck $questions)
     {
         $this->players = new Players();
+        $this->board = new Board(12, Category::all());
         $this->writer = $writer;
         $this->questions = $questions;
     }
@@ -35,6 +36,11 @@ class Game
     {
         $this->messages[] = $string;
         $this->writer->writeLine($string);
+    }
+
+    public function nextPlayer()
+    {
+        $this->players->next();
     }
 
     private function isPlayable()
@@ -48,7 +54,6 @@ class Game
 
         $this->echoln($playerName . " was added");
         $this->echoln("They are player number " . $this->players->howManyPlayers());
-        return true;
     }
 
     public function turn(Dice $dice)
@@ -77,7 +82,7 @@ class Game
 
     private function askQuestion()
     {
-        $currentCategory = $this->currentCategory();
+        $currentCategory = $this->board->getCategory($this->players->current()->place());
         $this->echoln("The category is " . $currentCategory);
         $question = $this->questions->current($currentCategory)->label();
         $this->questions->next($currentCategory);
@@ -85,18 +90,8 @@ class Game
     }
 
 
-    private function currentCategory()
-    {
-        if ($this->players->current()->place() % 4 == 0) return Category::POP;
-        if ($this->players->current()->place() % 4 == 1) return Category::SCIENCE;
-        if ($this->players->current()->place() % 4 == 2) return Category::SPORTS;
-        return Category::ROCK;
-    }
-
     public function wasCorrectlyAnswered()
     {
-        $winner = true;
-
         if (!$this->players->current()->isInPenaltyBox() || $this->isGettingOutOfPenaltyBox) {
             $this->echoln("Answer was correct!!!!");
             $this->players->current()->score();
@@ -104,11 +99,7 @@ class Game
                 . " now has "
                 . $this->players->current()->purse()
                 . " Gold Coins.");
-
-            $winner = $this->didPlayerWin();
         }
-        $this->players->next();
-        return $winner;
     }
 
     public function wrongAnswer()
@@ -116,15 +107,12 @@ class Game
         $this->echoln("Question was incorrectly answered");
         $this->echoln($this->players->current() . " was sent to the penalty box");
         $this->players->current()->goToPenaltyBox();
-
-        $this->players->next();
-        return true;
     }
 
 
-    private function didPlayerWin()
+    public function didPlayerWin()
     {
-        return !($this->players->current()->purse() == self::WINNING_SCORE);
+        return $this->players->current()->purse() == self::WINNING_SCORE;
     }
 
     /**
@@ -132,11 +120,7 @@ class Game
      */
     private function movePlayer(Dice $dice): void
     {
-        $position = $this->players->current()->place() + $dice->value();
-        if ($position >= self::BOARD_SIZE)
-            $position -= self::BOARD_SIZE;
-        $this->players->current()->moveTo($position);
-
+        $this->players->current()->moveTo($this->board->nextPosition($this->players->current()->place(), $dice->value()));
         $this->echoln($this->players->current()
             . "'s new location is "
             . $this->players->current()->place());

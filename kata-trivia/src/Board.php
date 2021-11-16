@@ -33,6 +33,7 @@ class Board
 
     public function nextPosition(int $start, int $roll): int
     {
-        return $start + $roll;
+        $end = $start + $roll;
+        return $end >= $this->size ? $end - $this->size : $end;
     }
 }

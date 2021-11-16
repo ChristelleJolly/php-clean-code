@@ -7,7 +7,7 @@ use Trivia\Game;
 use Trivia\ConsoleWriter;
 use Trivia\QuestionDeckFactory;
 
-$notAWinner;
+$isWinner = false;
 
 $questions = QuestionDeckFactory::build(50);
 
@@ -23,11 +23,12 @@ do {
     $aGame->turn(Dice::roll());
 
     if (rand(0,9) == 7) {
-        $notAWinner = $aGame->wrongAnswer();
+        $aGame->wrongAnswer();
     } else {
-        $notAWinner = $aGame->wasCorrectlyAnswered();
+        $aGame->wasCorrectlyAnswered();
     }
 
+    $isWinner = $aGame->didPlayerWin();
+    $aGame->nextPlayer();
 
-
-} while ($notAWinner);
+} while (!$isWinner);
