@@ -24,6 +24,10 @@ class Game {
     private $currentPlayer = 0;
     private $isGettingOutOfPenaltyBox;
 
+    const BOARD_SIZE = 12;
+
+    const WINNING_SCORE = 6;
+
     public function  __construct(){
 
         $this->players = array();
@@ -92,28 +96,28 @@ class Game {
 
     private function  askQuestion() {
         echoln("The category is " . $this->currentCategory());
-        if ($this->currentCategory() == "Pop")
+        if ($this->currentCategory() == Category::POP)
             echoln(array_shift($this->popQuestions));
-        if ($this->currentCategory() == "Science")
+        if ($this->currentCategory() == Category::SCIENCE)
             echoln(array_shift($this->scienceQuestions));
-        if ($this->currentCategory() == "Sports")
+        if ($this->currentCategory() == Category::SPORTS)
             echoln(array_shift($this->sportsQuestions));
-        if ($this->currentCategory() == "Rock")
+        if ($this->currentCategory() == Category::ROCK)
             echoln(array_shift($this->rockQuestions));
     }
 
 
     private function currentCategory() {
-        if ($this->places[$this->currentPlayer] == 0) return "Pop";
-        if ($this->places[$this->currentPlayer] == 4) return "Pop";
-        if ($this->places[$this->currentPlayer] == 8) return "Pop";
-        if ($this->places[$this->currentPlayer] == 1) return "Science";
-        if ($this->places[$this->currentPlayer] == 5) return "Science";
-        if ($this->places[$this->currentPlayer] == 9) return "Science";
-        if ($this->places[$this->currentPlayer] == 2) return "Sports";
-        if ($this->places[$this->currentPlayer] == 6) return "Sports";
-        if ($this->places[$this->currentPlayer] == 10) return "Sports";
-        return "Rock";
+        if ($this->places[$this->currentPlayer] == 0) return Category::POP;
+        if ($this->places[$this->currentPlayer] == 4) return Category::POP;
+        if ($this->places[$this->currentPlayer] == 8) return Category::POP;
+        if ($this->places[$this->currentPlayer] == 1) return Category::SCIENCE;
+        if ($this->places[$this->currentPlayer] == 5) return Category::SCIENCE;
+        if ($this->places[$this->currentPlayer] == 9) return Category::SCIENCE;
+        if ($this->places[$this->currentPlayer] == 2) return Category::SPORTS;
+        if ($this->places[$this->currentPlayer] == 6) return Category::SPORTS;
+        if ($this->places[$this->currentPlayer] == 10) return Category::SPORTS;
+        return Category::ROCK;
     }
 
     public function wasCorrectlyAnswered() {
@@ -127,13 +131,11 @@ class Game {
                     . " Gold Coins.");
 
                 $winner = $this->didPlayerWin();
-                $this->currentPlayer++;
-                if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+                $this->nextPlayer();
 
                 return $winner;
             } else {
-                $this->currentPlayer++;
-                if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+                $this->nextPlayer();
                 return true;
             }
 
@@ -149,8 +151,7 @@ class Game {
                 . " Gold Coins.");
 
             $winner = $this->didPlayerWin();
-            $this->currentPlayer++;
-            if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+            $this->nextPlayer();
 
             return $winner;
         }
@@ -161,14 +162,13 @@ class Game {
         echoln($this->players[$this->currentPlayer] . " was sent to the penalty box");
         $this->inPenaltyBox[$this->currentPlayer] = true;
 
-        $this->currentPlayer++;
-        if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+        $this->nextPlayer();
         return true;
     }
 
 
     private function didPlayerWin() {
-        return !($this->purses[$this->currentPlayer] == 6);
+        return !($this->purses[$this->currentPlayer] == self::WINNING_SCORE);
     }
 
     /**
@@ -177,10 +177,16 @@ class Game {
     private function movePlayer($roll): void
     {
         $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] + $roll;
-        if ($this->places[$this->currentPlayer] > 11) $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] - 12;
+        if ($this->places[$this->currentPlayer] >= self::BOARD_SIZE) $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] - self::BOARD_SIZE;
 
         echoln($this->players[$this->currentPlayer]
             . "'s new location is "
             . $this->places[$this->currentPlayer]);
+    }
+
+    private function nextPlayer(): void
+    {
+        $this->currentPlayer++;
+        if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
     }
 }
