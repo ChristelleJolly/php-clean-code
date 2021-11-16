@@ -14,32 +14,33 @@ class Game
      */
     private $players ;
 
-    private $popQuestions;
-    private $scienceQuestions;
-    private $sportsQuestions;
-    private $rockQuestions;
-
     private $isGettingOutOfPenaltyBox;
 
     const BOARD_SIZE = 12;
 
     const WINNING_SCORE = 6;
 
-    public function __construct(Writer $writer)
+    public function __construct(Writer $writer, ?QuestionDeck $questions = null)
     {
         $this->players = new Players();
         $this->writer = $writer;
 
-        $this->popQuestions = array();
-        $this->scienceQuestions = array();
-        $this->sportsQuestions = array();
-        $this->rockQuestions = array();
+        if ($questions == null) {
+            $questions = [];
 
-        for ($i = 0; $i < self::INIT_QUESTION_COUNT; $i++) {
-            array_push($this->popQuestions, "Pop Question " . $i);
-            array_push($this->scienceQuestions, ("Science Question " . $i));
-            array_push($this->sportsQuestions, ("Sports Question " . $i));
-            array_push($this->rockQuestions, $this->createRockQuestion($i));
+            for ($i = 0; $i < self::INIT_QUESTION_COUNT; $i++) {
+                $questions = array_merge($questions, [
+                    new Question(Category::POP, "Pop Question " . $i),
+                    new Question(Category::SCIENCE, "Science Question " . $i),
+                    new Question(Category::SPORTS, "Sports Question " . $i),
+                    new Question(Category::ROCK, "Rock Question " . $i),
+                ]);
+            }
+
+            $this->questions = new QuestionDeck(...$questions);
+        }
+        else {
+            $this->questions = $questions;
         }
     }
 
@@ -94,8 +95,10 @@ class Game
 
     private function askQuestion()
     {
-        $this->echoln("The category is " . $this->currentCategory());
-        $question = $this->getQuestion($this->currentCategory());
+        $currentCategory = $this->currentCategory();
+        $this->echoln("The category is " . $currentCategory);
+        $question = $this->questions->current($currentCategory)->label();
+        $this->questions->next($currentCategory);
         $this->echoln($question);
     }
 
@@ -157,15 +160,4 @@ class Game
             . $this->players->current()->place());
     }
 
-    private function getQuestion(string $currentCategory)
-    {
-        if ($currentCategory == Category::POP)
-            return array_shift($this->popQuestions);
-        if ($currentCategory == Category::SCIENCE)
-            return array_shift($this->scienceQuestions);
-        if ($currentCategory == Category::SPORTS)
-            return array_shift($this->sportsQuestions);
-        if ($currentCategory == Category::ROCK)
-            return array_shift($this->rockQuestions);
-    }
 }
