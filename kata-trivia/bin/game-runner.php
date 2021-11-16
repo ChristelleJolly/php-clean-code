@@ -3,10 +3,11 @@
 require_once __DIR__.'/../vendor/autoload.php';
 
 use Trivia\Game;
+use Trivia\ConsoleWriter;
 
 $notAWinner;
 
-$aGame = new Game();
+$aGame = new Game(new ConsoleWriter());
 
 $aGame->add("Chet");
 $aGame->add("Pat");
