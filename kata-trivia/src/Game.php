@@ -13,10 +13,10 @@ class Game
     private const INIT_QUESTION_COUNT = 50;
     private const MIN_PLAYER_COUNT = 2;
 
-    private $players;
-    private $places;
-    private $purses;
-    private $inPenaltyBox;
+    /**
+     * @var array| Player[]
+     */
+    private $players = [];
 
     private $popQuestions;
     private $scienceQuestions;
@@ -32,12 +32,6 @@ class Game
 
     public function __construct()
     {
-
-        $this->players = array();
-        $this->places = array(0);
-        $this->purses = array(0);
-        $this->inPenaltyBox = array(0);
-
         $this->popQuestions = array();
         $this->scienceQuestions = array();
         $this->sportsQuestions = array();
@@ -63,10 +57,7 @@ class Game
 
     public function add($playerName)
     {
-        array_push($this->players, $playerName);
-        $this->places[$this->howManyPlayers()] = 0;
-        $this->purses[$this->howManyPlayers()] = 0;
-        $this->inPenaltyBox[$this->howManyPlayers()] = false;
+        array_push($this->players, new Player($playerName));
 
         echoln($playerName . " was added");
         echoln("They are player number " . count($this->players));
@@ -83,7 +74,7 @@ class Game
         echoln($this->players[$this->currentPlayer] . " is the current player");
         echoln("They have rolled a " . $roll);
 
-        if ($this->inPenaltyBox[$this->currentPlayer]) {
+        if ($this->players[$this->currentPlayer]->isInPenaltyBox()) {
             if ($this->rollIsOdd($roll)) {
                 $this->isGettingOutOfPenaltyBox = true;
 
@@ -112,9 +103,9 @@ class Game
 
     private function currentCategory()
     {
-        if ($this->places[$this->currentPlayer] % 4 == 0) return Category::POP;
-        if ($this->places[$this->currentPlayer] % 4 == 1) return Category::SCIENCE;
-        if ($this->places[$this->currentPlayer] % 4 == 2) return Category::SPORTS;
+        if ($this->players[$this->currentPlayer]->place() % 4 == 0) return Category::POP;
+        if ($this->players[$this->currentPlayer]->place() % 4 == 1) return Category::SCIENCE;
+        if ($this->players[$this->currentPlayer]->place() % 4 == 2) return Category::SPORTS;
         return Category::ROCK;
     }
 
@@ -122,12 +113,12 @@ class Game
     {
         $winner = true;
 
-        if (!$this->inPenaltyBox[$this->currentPlayer] || $this->isGettingOutOfPenaltyBox) {
+        if (!$this->players[$this->currentPlayer]->isInPenaltyBox() || $this->isGettingOutOfPenaltyBox) {
             echoln("Answer was correct!!!!");
-            $this->purses[$this->currentPlayer]++;
+            $this->players[$this->currentPlayer]->score();
             echoln($this->players[$this->currentPlayer]
                 . " now has "
-                . $this->purses[$this->currentPlayer]
+                . $this->players[$this->currentPlayer]->purse()
                 . " Gold Coins.");
 
             $winner = $this->didPlayerWin();
@@ -140,7 +131,7 @@ class Game
     {
         echoln("Question was incorrectly answered");
         echoln($this->players[$this->currentPlayer] . " was sent to the penalty box");
-        $this->inPenaltyBox[$this->currentPlayer] = true;
+        $this->players[$this->currentPlayer]->goToPenaltyBox();
 
         $this->nextPlayer();
         return true;
@@ -149,7 +140,7 @@ class Game
 
     private function didPlayerWin()
     {
-        return !($this->purses[$this->currentPlayer] == self::WINNING_SCORE);
+        return !($this->players[$this->currentPlayer]->purse() == self::WINNING_SCORE);
     }
 
     /**
@@ -157,12 +148,14 @@ class Game
      */
     private function movePlayer($roll): void
     {
-        $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] + $roll;
-        if ($this->places[$this->currentPlayer] >= self::BOARD_SIZE) $this->places[$this->currentPlayer] = $this->places[$this->currentPlayer] - self::BOARD_SIZE;
+        $position = $this->players[$this->currentPlayer]->place() + $roll;
+        if ($position >= self::BOARD_SIZE)
+            $position -= self::BOARD_SIZE;
+        $this->players[$this->currentPlayer]->moveTo($position);
 
         echoln($this->players[$this->currentPlayer]
             . "'s new location is "
-            . $this->places[$this->currentPlayer]);
+            . $this->players[$this->currentPlayer]->place());
     }
 
     private function nextPlayer(): void
