@@ -31,4 +31,9 @@ class Dice
     {
         return $this->value;
     }
+
+    public function isOdd(): bool
+    {
+        return $this->value % 2 != 0;
+    }
 }

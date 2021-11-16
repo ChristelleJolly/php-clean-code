@@ -68,17 +68,17 @@ class Game
         return true;
     }
 
-    public function turn($roll)
+    public function turn(Dice $dice)
     {
         $this->echoln($this->players->current() . " is the current player");
-        $this->echoln("They have rolled a " . $roll);
+        $this->echoln("They have rolled a " . $dice->value());
 
         if ($this->players->current()->isInPenaltyBox()) {
-            if ($this->rollIsOdd($roll)) {
+            if ($dice->isOdd()) {
                 $this->isGettingOutOfPenaltyBox = true;
 
                 $this->echoln($this->players->current() . " is getting out of the penalty box");
-                $this->movePlayer($roll);
+                $this->movePlayer($dice);
                 $this->askQuestion();
             } else {
                 $this->echoln($this->players->current() . " is not getting out of the penalty box");
@@ -86,7 +86,7 @@ class Game
             }
 
         } else {
-            $this->movePlayer($roll);
+            $this->movePlayer($dice);
             $this->askQuestion();
         }
 
@@ -143,11 +143,11 @@ class Game
     }
 
     /**
-     * @param $roll
+     * @param $dice
      */
-    private function movePlayer($roll): void
+    private function movePlayer(Dice $dice): void
     {
-        $position = $this->players->current()->place() + $roll;
+        $position = $this->players->current()->place() + $dice->value();
         if ($position >= self::BOARD_SIZE)
             $position -= self::BOARD_SIZE;
         $this->players->current()->moveTo($position);
@@ -155,15 +155,6 @@ class Game
         $this->echoln($this->players->current()
             . "'s new location is "
             . $this->players->current()->place());
-    }
-
-    /**
-     * @param $roll
-     * @return bool
-     */
-    private function rollIsOdd($roll): bool
-    {
-        return $roll % 2 != 0;
     }
 
     private function getQuestion(string $currentCategory)

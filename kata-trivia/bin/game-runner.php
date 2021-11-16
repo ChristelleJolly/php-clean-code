@@ -17,8 +17,7 @@ $aGame->add("Sue");
 
 do {
 
-    $roll = Dice::roll();
-    $aGame->turn($roll->value());
+    $aGame->turn(Dice::roll());
 
     if (rand(0,9) == 7) {
         $notAWinner = $aGame->wrongAnswer();
