@@ -10,23 +10,33 @@ class QuestionDeck
     /**
      * @var Question[]
      */
-    private $questions;
-    private $current = 0;
+    private $questions = [];
+
+    private $categorizedQuestions = [];
+
+    private $currents = [];
 
     public function __construct(Question ...$questions)
     {
-        $this->questions = $questions;
+        foreach ($questions as $question) {
+            if (!isset($this->questions[$question->category()])) {
+                $this->categorizedQuestions[$question->category()] = new QuestionList($question->category());
+                $this->questions[$question->category()] = [];
+                $this->currents[$question->category()] = 0;
+            }
+            $this->questions[$question->category()][] = $question;
+        }
     }
 
     public function current(string $category): Question
     {
-        if (!isset($this->questions[$this->current]))
+        if (!isset($this->questions[$category][$this->currents[$category]]))
             throw new \OutOfBoundsException("No more question for category " . $category);
-        return $this->questions[$this->current];
+        return $this->questions[$category][$this->currents[$category]];
     }
 
     public function next(string $category)
     {
-        $this->current++;
+        $this->currents[$category]++;
     }
 }
