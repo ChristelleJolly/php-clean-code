@@ -8,6 +8,8 @@ class Player
 {
 
     private $name;
+    private $place = 0;
+    private $purse = 0;
 
     public function __construct(string $name)
     {
@@ -21,12 +23,12 @@ class Player
 
     public function purse()
     {
-        return 0;
+        return $this->purse;
     }
 
     public function place()
     {
-        return 0;
+        return $this->place;
     }
 
     public function isInPenaltyBox()
@@ -34,7 +36,20 @@ class Player
         return false;
     }
 
-    public function moveTo($int)
+    public function moveTo(int $place)
+    {
+        if ($place < 0)
+            throw new \InvalidArgumentException("Place cannot be negative.");
+
+        $this->place = $place;
+    }
+
+    public function score()
+    {
+        $this->purse++;
+    }
+
+    public function goToPenaltyBox()
     {
     }
 }

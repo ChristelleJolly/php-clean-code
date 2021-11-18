@@ -27,4 +27,32 @@ class PlayerTest extends TestCase
 
         Assert::assertEquals(5, $player->place());
     }
+
+    public function test_should_not_move_to_negative_position()
+    {
+        $player = new Player("name");
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $player->moveTo(-5);
+    }
+
+    public function test_a_player_should_score()
+    {
+        $player = new Player("name");
+
+        $player->score();
+        $player->score();
+
+        Assert::assertEquals(2, $player->purse());
+    }
+
+    public function test_a_player_should_go_to_the_penalty_box()
+    {
+        $player = new Player("name");
+
+        $player->goToPenaltyBox();
+
+        Assert::assertTrue($player->isInPenaltyBox());
+    }
 }
