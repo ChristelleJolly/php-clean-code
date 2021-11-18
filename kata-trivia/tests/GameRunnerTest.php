@@ -15,6 +15,7 @@ class GameRunnerTest extends TestCase
         $output = ob_get_contents();
         ob_end_clean();
 
+        //file_put_contents(__DIR__.'/results/golden_master.txt', $output);
         $this->assertEquals(file_get_contents(__DIR__.'/results/golden_master.txt'), $output);
     }
 }
