@@ -71,12 +71,12 @@ class Game {
         return count($this->players);
     }
 
-    public function  roll($roll) {
+    public function roll($roll) {
         echoln($this->players[$this->currentPlayer] . " is the current player");
         echoln("They have rolled a " . $roll);
 
         if ($this->inPenaltyBox[$this->currentPlayer]) {
-            if ($roll % 2 != 0) {
+            if ($this->rollIsOdd($roll)) {
                 $this->isGettingOutOfPenaltyBox = true;
 
                 echoln($this->players[$this->currentPlayer] . " is getting out of the penalty box");
@@ -96,27 +96,15 @@ class Game {
 
     private function  askQuestion() {
         echoln("The category is " . $this->currentCategory());
-        if ($this->currentCategory() == Category::POP)
-            echoln(array_shift($this->popQuestions));
-        if ($this->currentCategory() == Category::SCIENCE)
-            echoln(array_shift($this->scienceQuestions));
-        if ($this->currentCategory() == Category::SPORTS)
-            echoln(array_shift($this->sportsQuestions));
-        if ($this->currentCategory() == Category::ROCK)
-            echoln(array_shift($this->rockQuestions));
+        $question = $this->getQuestion($this->currentCategory());
+        echoln($question);
     }
 
 
     private function currentCategory() {
-        if ($this->places[$this->currentPlayer] == 0) return Category::POP;
-        if ($this->places[$this->currentPlayer] == 4) return Category::POP;
-        if ($this->places[$this->currentPlayer] == 8) return Category::POP;
-        if ($this->places[$this->currentPlayer] == 1) return Category::SCIENCE;
-        if ($this->places[$this->currentPlayer] == 5) return Category::SCIENCE;
-        if ($this->places[$this->currentPlayer] == 9) return Category::SCIENCE;
-        if ($this->places[$this->currentPlayer] == 2) return Category::SPORTS;
-        if ($this->places[$this->currentPlayer] == 6) return Category::SPORTS;
-        if ($this->places[$this->currentPlayer] == 10) return Category::SPORTS;
+        if ($this->places[$this->currentPlayer] % 4 == 0) return Category::POP;
+        if ($this->places[$this->currentPlayer] % 4 == 1) return Category::SCIENCE;
+        if ($this->places[$this->currentPlayer] % 4 == 2) return Category::SPORTS;
         return Category::ROCK;
     }
 
@@ -188,5 +176,26 @@ class Game {
     {
         $this->currentPlayer++;
         if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+    }
+
+    /**
+     * @param $roll
+     * @return bool
+     */
+    private function rollIsOdd($roll): bool
+    {
+        return $roll % 2 != 0;
+    }
+
+    private function getQuestion(string $currentCategory)
+    {
+        if ($currentCategory == Category::POP)
+            return array_shift($this->popQuestions);
+        if ($currentCategory == Category::SCIENCE)
+            return array_shift($this->scienceQuestions);
+        if ($currentCategory == Category::SPORTS)
+            return array_shift($this->sportsQuestions);
+        if ($currentCategory == Category::ROCK)
+            return array_shift($this->rockQuestions);
     }
 }
