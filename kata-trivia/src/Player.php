@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Tests;
+namespace Trivia;
 
 
 class Player
@@ -10,10 +10,16 @@ class Player
     private $name;
     private $place = 0;
     private $purse = 0;
+    private $isInPenaltyBox = false;
 
     public function __construct(string $name)
     {
         $this->name = $name;
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 
     public function name()
@@ -33,7 +39,7 @@ class Player
 
     public function isInPenaltyBox()
     {
-        return false;
+        return $this->isInPenaltyBox;
     }
 
     public function moveTo(int $place)
@@ -51,5 +57,11 @@ class Player
 
     public function goToPenaltyBox()
     {
+        $this->isInPenaltyBox = true;
+    }
+
+    public function exitPenaltyBox()
+    {
+        $this->isInPenaltyBox = false;
     }
 }

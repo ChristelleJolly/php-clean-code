@@ -6,6 +6,7 @@ namespace Tests;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Trivia\Player;
 
 class PlayerTest extends TestCase
 {
@@ -54,5 +55,21 @@ class PlayerTest extends TestCase
         $player->goToPenaltyBox();
 
         Assert::assertTrue($player->isInPenaltyBox());
+    }
+
+    public function test_a_player_should_exit_the_penalty_box()
+    {
+        $player = new Player("name");
+        $player->goToPenaltyBox();
+        $player->exitPenaltyBox();
+
+        Assert::assertFalse($player->isInPenaltyBox());
+    }
+
+    public function test_a_player_should_cast_to_string()
+    {
+        $player = new Player("name");
+
+        Assert::assertEquals("name", $player);
     }
 }
