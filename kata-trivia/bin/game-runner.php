@@ -2,6 +2,7 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
+use Trivia\Dice;
 use Trivia\Game;
 use Trivia\ConsoleWriter;
 
@@ -16,7 +17,8 @@ $aGame->add("Sue");
 
 do {
 
-    $aGame->turn(rand(0,5) + 1);
+    $roll = Dice::roll();
+    $aGame->turn($roll->value());
 
     if (rand(0,9) == 7) {
         $notAWinner = $aGame->wrongAnswer();
