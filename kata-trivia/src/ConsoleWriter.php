@@ -18,4 +18,10 @@ class ConsoleWriter implements Writer
     {
         echo $string . "\n";
     }
+
+    public function writeLines(...$strings)
+    {
+        foreach ($strings as $string)
+            $this->writeLine($string);
+    }
 }

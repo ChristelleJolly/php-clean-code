@@ -11,12 +11,16 @@ $isWinner = false;
 
 $questions = QuestionDeckFactory::build(50);
 
-$aGame = new Game(new ConsoleWriter(), $questions);
+$writer = new ConsoleWriter();
+
+$aGame = new Game($questions);
 
 $aGame->add("Chet");
 $aGame->add("Pat");
 $aGame->add("Sue");
 
+$writer->writeLines(...$aGame->messages());
+$aGame->flushMessages();
 
 do {
 
@@ -30,5 +34,8 @@ do {
 
     $isWinner = $aGame->didPlayerWin();
     $aGame->nextPlayer();
+
+    $writer->writeLines(...$aGame->messages());
+    $aGame->flushMessages();
 
 } while (!$isWinner);
