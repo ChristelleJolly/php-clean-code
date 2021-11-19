@@ -8,26 +8,16 @@ class QuestionDeck
 {
 
     /**
-     * @var Question[]
-     */
-    private $questions = [];
-
-    /**
      * @var QuestionList[]
      */
     private $categorizedQuestions = [];
 
-    private $currents = [];
-
     public function __construct(Question ...$questions)
     {
         foreach ($questions as $question) {
-            if (!isset($this->questions[$question->category()])) {
+            if (!isset($this->categorizedQuestions[$question->category()])) {
                 $this->categorizedQuestions[$question->category()] = new QuestionList($question->category());
-                $this->questions[$question->category()] = [];
-                $this->currents[$question->category()] = 0;
             }
-            $this->questions[$question->category()][] = $question;
             $this->categorizedQuestions[$question->category()]->add($question);
         }
     }
@@ -40,6 +30,5 @@ class QuestionDeck
     public function next(string $category)
     {
         $this->categorizedQuestions[$category]->next();
-        $this->currents[$category]++;
     }
 }

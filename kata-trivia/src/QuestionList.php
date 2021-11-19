@@ -22,6 +22,9 @@ class QuestionList
 
     public function add(Question $question)
     {
+        if ($question->category() != $this->category)
+            throw new \InvalidArgumentException(sprintf("Can't ask category %s to list of category %s",
+                $question->category(), $this->category));
         $this->questions[] = $question;
     }
 
