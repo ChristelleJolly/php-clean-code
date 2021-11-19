@@ -31,6 +31,14 @@ class Players
 
     public function current(): Player
     {
+        if (!isset($this->playerList[$this->current]))
+            throw new \OutOfBoundsException("No player available");
         return $this->playerList[$this->current];
+    }
+
+    public function next()
+    {
+        $next = $this->current + 1;
+        $this->current = $next >= $this->howManyPlayers() ? 0 : $next;
     }
 }

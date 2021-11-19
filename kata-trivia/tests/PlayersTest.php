@@ -37,4 +37,39 @@ class PlayersTest extends TestCase
 
         Assert::assertEquals("player 1", $players->current());
     }
+
+    public function test_should_throw_exception_while_getting_current_player_with_no_player()
+    {
+        $players = new Players();
+
+        $this->expectException(\OutOfBoundsException::class);
+
+        $players->current();
+    }
+
+    public function test_should_retrieve_second_player_while_getting_current_after_a_next()
+    {
+        $players = new Players();
+
+        $players->add(new Player('player 1'));
+        $players->add(new Player('player 2'));
+        $players->add(new Player('player 3'));
+
+        $players->next();
+
+        Assert::assertEquals("player 2", $players->current());
+    }
+
+    public function test_should_loop_through_player_list()
+    {
+        $players = new Players();
+
+        $players->add(new Player('player 1'));
+        $players->add(new Player('player 2'));
+
+        $players->next();
+        $players->next();
+
+        Assert::assertEquals("player 1", $players->current());
+    }
 }
