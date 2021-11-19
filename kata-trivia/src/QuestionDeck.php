@@ -12,6 +12,9 @@ class QuestionDeck
      */
     private $questions = [];
 
+    /**
+     * @var QuestionList[]
+     */
     private $categorizedQuestions = [];
 
     private $currents = [];
@@ -25,18 +28,18 @@ class QuestionDeck
                 $this->currents[$question->category()] = 0;
             }
             $this->questions[$question->category()][] = $question;
+            $this->categorizedQuestions[$question->category()]->add($question);
         }
     }
 
     public function current(string $category): Question
     {
-        if (!isset($this->questions[$category][$this->currents[$category]]))
-            throw new \OutOfBoundsException("No more question for category " . $category);
-        return $this->questions[$category][$this->currents[$category]];
+        return $this->categorizedQuestions[$category]->current();
     }
 
     public function next(string $category)
     {
+        $this->categorizedQuestions[$category]->next();
         $this->currents[$category]++;
     }
 }
