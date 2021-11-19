@@ -4,6 +4,7 @@
 namespace Tests;
 
 
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Trivia\Board;
 use Trivia\Category;
@@ -13,6 +14,20 @@ class BoardTest extends TestCase
 
     public function test_should_give_category_by_position()
     {
-        $board = new Board(12, Category::all());
+        $categories = Category::all();
+        $board = new Board(12, $categories);
+
+        Assert::assertEquals($categories[0], $board->getCategory(0));
+    }
+
+    public function test_should_give_next_position_for_a_roll()
+    {
+        $categories = Category::all();
+        $board = new Board(12, $categories);
+
+        $start = 0;
+        $roll = 4;
+        $end = $board->nextPosition($start, $roll);
+        Assert::assertEquals(4, $end);
     }
 }
