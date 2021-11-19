@@ -14,16 +14,15 @@ class Game
     private const MIN_PLAYER_COUNT = 2;
 
     /**
-     * @var array| Player[]
+     * @var Players
      */
-    private $players = [];
+    private $players ;
 
     private $popQuestions;
     private $scienceQuestions;
     private $sportsQuestions;
     private $rockQuestions;
 
-    private $currentPlayer = 0;
     private $isGettingOutOfPenaltyBox;
 
     const BOARD_SIZE = 12;
@@ -32,6 +31,7 @@ class Game
 
     public function __construct()
     {
+        $this->players = new Players();
         $this->popQuestions = array();
         $this->scienceQuestions = array();
         $this->sportsQuestions = array();
@@ -52,37 +52,32 @@ class Game
 
     private function isPlayable()
     {
-        return ($this->howManyPlayers() >= self::MIN_PLAYER_COUNT);
+        return ($this->players->howManyPlayers() >= self::MIN_PLAYER_COUNT);
     }
 
     public function add($playerName)
     {
-        array_push($this->players, new Player($playerName));
+        $this->players->add(new Player($playerName));
 
         echoln($playerName . " was added");
-        echoln("They are player number " . count($this->players));
+        echoln("They are player number " . $this->players->howManyPlayers());
         return true;
-    }
-
-    private function howManyPlayers()
-    {
-        return count($this->players);
     }
 
     public function turn($roll)
     {
-        echoln($this->players[$this->currentPlayer] . " is the current player");
+        echoln($this->players->current() . " is the current player");
         echoln("They have rolled a " . $roll);
 
-        if ($this->players[$this->currentPlayer]->isInPenaltyBox()) {
+        if ($this->players->current()->isInPenaltyBox()) {
             if ($this->rollIsOdd($roll)) {
                 $this->isGettingOutOfPenaltyBox = true;
 
-                echoln($this->players[$this->currentPlayer] . " is getting out of the penalty box");
+                echoln($this->players->current() . " is getting out of the penalty box");
                 $this->movePlayer($roll);
                 $this->askQuestion();
             } else {
-                echoln($this->players[$this->currentPlayer] . " is not getting out of the penalty box");
+                echoln($this->players->current() . " is not getting out of the penalty box");
                 $this->isGettingOutOfPenaltyBox = false;
             }
 
@@ -103,9 +98,9 @@ class Game
 
     private function currentCategory()
     {
-        if ($this->players[$this->currentPlayer]->place() % 4 == 0) return Category::POP;
-        if ($this->players[$this->currentPlayer]->place() % 4 == 1) return Category::SCIENCE;
-        if ($this->players[$this->currentPlayer]->place() % 4 == 2) return Category::SPORTS;
+        if ($this->players->current()->place() % 4 == 0) return Category::POP;
+        if ($this->players->current()->place() % 4 == 1) return Category::SCIENCE;
+        if ($this->players->current()->place() % 4 == 2) return Category::SPORTS;
         return Category::ROCK;
     }
 
@@ -113,34 +108,34 @@ class Game
     {
         $winner = true;
 
-        if (!$this->players[$this->currentPlayer]->isInPenaltyBox() || $this->isGettingOutOfPenaltyBox) {
+        if (!$this->players->current()->isInPenaltyBox() || $this->isGettingOutOfPenaltyBox) {
             echoln("Answer was correct!!!!");
-            $this->players[$this->currentPlayer]->score();
-            echoln($this->players[$this->currentPlayer]
+            $this->players->current()->score();
+            echoln($this->players->current()
                 . " now has "
-                . $this->players[$this->currentPlayer]->purse()
+                . $this->players->current()->purse()
                 . " Gold Coins.");
 
             $winner = $this->didPlayerWin();
         }
-        $this->nextPlayer();
+        $this->players->next();
         return $winner;
     }
 
     public function wrongAnswer()
     {
         echoln("Question was incorrectly answered");
-        echoln($this->players[$this->currentPlayer] . " was sent to the penalty box");
-        $this->players[$this->currentPlayer]->goToPenaltyBox();
+        echoln($this->players->current() . " was sent to the penalty box");
+        $this->players->current()->goToPenaltyBox();
 
-        $this->nextPlayer();
+        $this->players->next();
         return true;
     }
 
 
     private function didPlayerWin()
     {
-        return !($this->players[$this->currentPlayer]->purse() == self::WINNING_SCORE);
+        return !($this->players->current()->purse() == self::WINNING_SCORE);
     }
 
     /**
@@ -148,20 +143,14 @@ class Game
      */
     private function movePlayer($roll): void
     {
-        $position = $this->players[$this->currentPlayer]->place() + $roll;
+        $position = $this->players->current()->place() + $roll;
         if ($position >= self::BOARD_SIZE)
             $position -= self::BOARD_SIZE;
-        $this->players[$this->currentPlayer]->moveTo($position);
+        $this->players->current()->moveTo($position);
 
-        echoln($this->players[$this->currentPlayer]
+        echoln($this->players->current()
             . "'s new location is "
-            . $this->players[$this->currentPlayer]->place());
-    }
-
-    private function nextPlayer(): void
-    {
-        $this->currentPlayer++;
-        if ($this->currentPlayer == count($this->players)) $this->currentPlayer = 0;
+            . $this->players->current()->place());
     }
 
     /**
