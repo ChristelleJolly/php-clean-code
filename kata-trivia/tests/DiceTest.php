@@ -16,4 +16,11 @@ class DiceTest extends TestCase
 
         $dice = new Dice(-1);
     }
+
+    public function test_should_not_be_above_six()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $dice = new Dice(7);
+    }
 }
