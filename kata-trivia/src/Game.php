@@ -15,7 +15,6 @@ class Game
 
     private $isGettingOutOfPenaltyBox;
 
-    const BOARD_SIZE = 12;
     const WINNING_SCORE = 6;
 
     /** @var Writer */
@@ -41,6 +40,11 @@ class Game
     public function nextPlayer()
     {
         $this->players->next();
+    }
+
+    public function messages(): array
+    {
+        return $this->messages;
     }
 
     private function isPlayable()
