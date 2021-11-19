@@ -5,10 +5,13 @@ require_once __DIR__.'/../vendor/autoload.php';
 use Trivia\Dice;
 use Trivia\Game;
 use Trivia\ConsoleWriter;
+use Trivia\QuestionDeckFactory;
 
 $notAWinner;
 
-$aGame = new Game(new ConsoleWriter());
+$questions = QuestionDeckFactory::build(50);
+
+$aGame = new Game(new ConsoleWriter(), $questions);
 
 $aGame->add("Chet");
 $aGame->add("Pat");

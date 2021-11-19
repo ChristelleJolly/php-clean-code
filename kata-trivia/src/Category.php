@@ -13,4 +13,8 @@ class Category
     const SPORTS = "Sports";
 
     const ROCK = "Rock";
+
+    public static function all(): array
+    {
+    }
 }

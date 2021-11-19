@@ -5,7 +5,6 @@ namespace Trivia;
 
 class Game
 {
-    private const INIT_QUESTION_COUNT = 50;
     private const MIN_PLAYER_COUNT = 2;
     protected $messages;
 
@@ -17,42 +16,25 @@ class Game
     private $isGettingOutOfPenaltyBox;
 
     const BOARD_SIZE = 12;
-
     const WINNING_SCORE = 6;
 
-    public function __construct(Writer $writer, ?QuestionDeck $questions = null)
+    /** @var Writer */
+    private $writer;
+
+    /** @var QuestionDeck */
+    private $questions;
+
+    public function __construct(Writer $writer, QuestionDeck $questions)
     {
         $this->players = new Players();
         $this->writer = $writer;
-
-        if ($questions == null) {
-            $questions = [];
-
-            for ($i = 0; $i < self::INIT_QUESTION_COUNT; $i++) {
-                $questions = array_merge($questions, [
-                    new Question(Category::POP, "Pop Question " . $i),
-                    new Question(Category::SCIENCE, "Science Question " . $i),
-                    new Question(Category::SPORTS, "Sports Question " . $i),
-                    new Question(Category::ROCK, "Rock Question " . $i),
-                ]);
-            }
-
-            $this->questions = new QuestionDeck(...$questions);
-        }
-        else {
-            $this->questions = $questions;
-        }
+        $this->questions = $questions;
     }
 
     private function echoln($string)
     {
         $this->messages[] = $string;
         $this->writer->writeLine($string);
-    }
-
-    private function createRockQuestion($index)
-    {
-        return "Rock Question " . $index;
     }
 
     private function isPlayable()
