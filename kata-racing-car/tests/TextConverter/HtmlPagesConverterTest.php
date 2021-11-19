@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\TextConverter;
+namespace Trivia\TextConverter;
 
 use PHPUnit\Framework\TestCase;
 use RacingCar\TextConverter\HtmlPagesConverter;

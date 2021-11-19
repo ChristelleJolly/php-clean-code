@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\TurnTicketDispenser;
+namespace Trivia\TurnTicketDispenser;
 
 use PHPUnit\Framework\TestCase;
 use RacingCar\TurnTicketDispenser\TicketDispenser;

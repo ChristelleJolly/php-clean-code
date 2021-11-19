@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Leaderboard;
+namespace Trivia\Leaderboard;
 
 use PHPUnit\Framework\TestCase;
 use RacingCar\Leaderboard\Driver;

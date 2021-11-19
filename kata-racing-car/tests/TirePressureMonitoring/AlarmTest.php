@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\TirePressureMonitoring;
+namespace Trivia\TirePressureMonitoring;
 
 use PHPUnit\Framework\TestCase;
 use RacingCar\TirePressureMonitoring\Alarm;
