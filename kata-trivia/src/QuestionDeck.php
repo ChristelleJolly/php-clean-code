@@ -20,6 +20,13 @@ class QuestionDeck
 
     public function current(string $category): Question
     {
+        if (!isset($this->questions[$this->current]))
+            throw new \OutOfBoundsException("No more question for category " . $category);
         return $this->questions[$this->current];
+    }
+
+    public function next(string $category)
+    {
+        $this->current++;
     }
 }

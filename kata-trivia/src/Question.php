@@ -8,14 +8,9 @@ class Question
 {
     private $label;
 
-    /**
-     * Question constructor.
-     * @param string $POP
-     * @param string $string
-     */
-    public function __construct(string $POP, string $string)
+    public function __construct(string $category, string $label)
     {
-        $this->label = $string;
+        $this->label = $label;
     }
 
     public function label(): string
